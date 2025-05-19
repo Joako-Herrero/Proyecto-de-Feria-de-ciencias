@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Styles/style.css">
+    <title>Digitaliza tu PyME</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+
+    <style>
+        /* Para Chrome, Safari y Edge */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+            /* Para eliminar las flechas completamente */
+        }
+
+        /* Para Firefox */
+        input[type="number"] {
+            -moz-appearance: textfield;
+            /* Elimina las flechas de Firefox */
+        }
+
+        /* Para Internet Explorer (aunque es raro que alguien lo use) */
+        input[type="number"] {
+            -ms-appearance: textfield;
+            /* Elimina las flechas de IE */
+        }
+
+        /*Registro*/
+
+        h4 {
+            margin: 0;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 2rem;
+            margin: .3rem;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-left: 5rem;
+        }
+
+        th,
+        td {
+            border: solid 2px black;
+            padding: 5px;
+            font-size: 1.3rem;
+        }
+
+        .registroTitulo {
+            margin-top: 2rem;
+            margin-left: 5rem;
+
+        }
+
+
+
+        .formInput {
+            left: 50%;
+            
+            top: 8.5rem;
+            font-size: 2rem;
+            padding: 1rem;
+        }
+
+        .formInput form {
+            background-color: rgba(2, 145, 0, 0.657);
+            padding: 1rem;
+            padding-bottom: 24px;
+
+        }
+
+        .buscarFecha {
+            position: absolute;
+            left: 50%;
+            top: 45%;
+            width: 30rem;
+
+        }
+
+        .buscarFecha form {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            /* Espacio entre los elementos */
+            font-size: 1.5rem;
+            flex-wrap: wrap;
+            /* Para que se acomode mejor en pantallas chicas */
+            border: dotted 2px black;
+            padding: 1rem;
+            background-color: rgba(247, 50, 139, 0.711);
+
+        }
+
+        .buscarFecha form button {
+            color: #000;
+            background-color: #fff;
+            border: none;
+            padding: 5px;
+            font-size: 1.2rem;
+        }
+
+
+        /*Registro*/
+
+        body {
+            font-family: sans-serif;
+        }
+
+        .tabs {
+            display: flex;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            background-color: #f1f1f1;
+            margin-right: 5px;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+        }
+
+        .content {
+            border: 1px solid #ccc;
+            padding: 20px;
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+            height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header img {
+            height: 60px;
+        }
+
+        .info {
+            text-align: right;
+        }
+
+        h2 {
+            margin: 0;
+        }
+
+        table {
+
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f5f5f5;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .total {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 12px;
+            color: gray;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+
+        .download-btn {
+            margin: 20px 0;
+        }
+
+        input,
+        button {
+            padding: 8px;
+            margin: 5px 0;
+            max-width: 300px;
+        }
+
+        .form-wrapper {
+            margin-bottom: 30px;
+        }
+
+        .form-inline {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="hoja1">Registros</div>
+        <div class="tab" data-tab="hoja2">Control de Stock</div>
+        <div class="tab" data-tab="hoja3">Presupuestador</div>
+    </div>
+
+    <!-- Contenido de Registros -->
+    <div class="content active" id="hoja1">
+        <h3 class="registroTitulo">Registros del día:</h3>
+        <table id="tablaRegistros">
+            <thead>
+                <tr id="RegisterHeaders">
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>Haber</th>
+                    <th>Debe</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody id="RegisterValues"></tbody>
+        </table>
+
+        <div class="formInput">
+            <h3>Añadir Registro:</h3>
+            <form id="registroForm">
+                <input type="date" id="inputDate" name="fecha" readonly>
+                <input type="text" name="Descripción" id="Description" placeholder="Descripción" required>
+                <input type="number" name="monto" id="monto" placeholder="Monto" required>
+                <select name="Caracter" id="tipo" required>
+                    <option value="Entra">Entra</option>
+                    <option value="Sale">Sale</option>
+                </select>
+                <button type="button" id="registroAddButtonForm">Enter</button>
+            </form>
+            <h4 id="mensaje"></h4>
+        </div>
+
+        <div class="buscarFecha">
+            <h3>Buscar Registros pasados:</h3>
+            <form id="formFiltrarFechas">
+                <p>Desde:</p>
+                <input type="date" id="fromDate" min="2025-05-01">
+                <p>Hasta:</p>
+                <input type="date" id="toDate" min="2025-05-01">
+                <button type="button" id="formFiltrarFechasButton">Ver Registros pasados</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Contenido de Stock -->
+    <div class="content" id="hoja2">
+        <h2>Gestión de Stock</h2>
+        <form id="formProducto" class="form-wrapper">
+            <div class="form-inline">
+                <input type="date" id="fecha" required>
+                <input type="text" id="nombre" placeholder="Nombre o Descripción" required>
+                <input type="number" id="preciocosto" placeholder="Precio Costo" step="0.01" required>
+                <input type="number" id="porcentajeGanancia" placeholder="% de Ganancia" step="0.01" required>
+                <input type="number" id="stock" placeholder="Cantidad en Stock" required>
+                <input type="text" id="preciounitario" placeholder="Precio Venta" readonly>
+                <button type="button" id="agregarProductos">Agregar Producto</button>
+            </div>
+            <div id="mensajeProducto"></div>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Nombre</th>
+                    <th>Precio Costo</th>
+                    <th>% Ganancia</th>
+                    <th>Precio Venta</th>
+                    <th>Stock</th>
+                </tr>
+            </thead>
+            <tbody id="tablaProductos"></tbody>
+        </table>
+    </div>
+
+    <!-- Contenido de Presupuestador -->
+    <div class="content" id="hoja3">
+        <h2>Formulario de Presupuesto</h2>
+        <form class="form-wrapper" onsubmit="return false;">
+            <div class="form-inline">
+                <input type="text" id="descripcion" placeholder="Descripción">
+                <input type="number" id="cantidad" placeholder="Cantidad">
+                <input type="number" id="precio" placeholder="Precio Unitario">
+                <button type="button" onclick="agregarItem()">Agregar Ítem</button>
+            </div>
+            <input type="text" id="cliente" placeholder="Nombre del cliente">
+            <button type="button" onclick="generarPresupuesto()">Generar PDF</button>
+        </form>
+
+        <div id="presupuesto">
+            <div class="header">
+                <h2>Presupuesto</h2>
+                <p>Fecha: <span id="fechaPresupuesto"></span></p>
+                <p>Cliente: <span id="nombreCliente">Nombre del cliente</span></p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaItems"></tbody>
+            </table>
+
+            <div class="total">
+                <strong id="totalFinal">Total: $0</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript General -->
+    <script>
+        // Pestañas
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('.content');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.getAttribute('data-tab');
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(target).classList.add('active');
+            });
+        });
+
+        // Fecha por defecto
+        document.addEventListener("DOMContentLoaded", () => {
+            const today = new Date().toISOString().split("T")[0];
+            document.getElementById("inputDate").value = today;
+            document.getElementById("fecha").value = today;
+            document.getElementById("fechaPresupuesto").textContent = today;
+        });
+
+        // Stock - Precio Venta
+        const costoInput = document.getElementById("preciocosto");
+        const gananciaInput = document.getElementById("porcentajeGanancia");
+        const precioInput = document.getElementById("preciounitario");
+
+        function calcularPrecioVenta() {
+            const costo = parseFloat(costoInput.value);
+            const ganancia = parseFloat(gananciaInput.value);
+            if (!isNaN(costo) && !isNaN(ganancia)) {
+                const venta = costo + (costo * ganancia / 100);
+                precioInput.value = venta.toFixed(2);
+            } else {
+                precioInput.value = "";
+            }
+        }
+
+        costoInput.addEventListener("input", calcularPrecioVenta);
+        gananciaInput.addEventListener("input", calcularPrecioVenta);
+
+        document.getElementById("agregarProductos").addEventListener("click", async function (e) {
+            e.preventDefault();
+            formProducto=document.getElementById("formProducto");
+            const nuevoProducto = {
+                fecha: document.getElementById("fecha").value,
+                nombre: document.getElementById("nombre").value,
+                precioCosto: parseFloat(costoInput.value),
+                porcentajeGanancia: parseFloat(gananciaInput.value),
+                precioUnitario: parseFloat(precioInput.value),
+                stock: parseInt(document.getElementById("stock").value)
+            };
+
+            try {
+                const res = await fetch("http://localhost:8080/productos/create", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(nuevoProducto)
+                });
+
+                const mensaje = document.getElementById("mensajeProducto");
+                if (res.ok) {
+                    mensaje.textContent = "Producto guardado correctamente.";
+                    mensaje.style.color = "green";
+                    cargarProductos();
+                    formProducto.reset();
+                    const hoy = new Date().toISOString().split('T')[0];
+                    document.querySelector('#fecha').value = hoy;
+
+                    precioInput.value = "";
+                } else {
+                    mensaje.textContent = "Error al guardar el producto.";
+                    mensaje.style.color = "red";
+                }
+            } catch (err) {
+                console.error("Error:", err);
+            }
+        });
+
+        function cargarProductos() {
+            fetch("http://localhost:8080/productos/list")
+                .then(res => res.json())
+                .then(data => {
+                    const tabla = document.getElementById("tablaProductos");
+                    tabla.innerHTML = "";
+                    data.forEach(p => {
+                        const fila = document.createElement("tr");
+                        fila.innerHTML = `
+            <td>${p.fecha}</td>
+            <td>${p.nombre}</td>
+            <td>$${p.precioCosto.toFixed(2)}</td>
+            <td>${p.porcentajeGanancia}%</td>
+            <td>$${p.precioUnitario.toFixed(2)}</td>
+            <td>${p.stock}</td>
+          `;
+                        tabla.appendChild(fila);
+                    });
+                })
+                .catch(err => console.error("Error al cargar productos:", err));
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const hoy = new Date().toISOString().split("T")[0];
+            document.getElementById("fecha").value = hoy;
+            cargarProductos();
+        });
+
+        // Presupuestador
+        const tabla = document.getElementById("tablaItems");
+        let totalGeneral = 0;
+
+        function agregarItem() {
+            const desc = document.getElementById("descripcion").value;
+            const cant = parseFloat(document.getElementById("cantidad").value);
+            const precio = parseFloat(document.getElementById("precio").value);
+
+            if (!desc || isNaN(cant) || isNaN(precio)) {
+                alert("Por favor, completa todos los campos del ítem.");
+                return;
+            }
+
+            const total = cant * precio;
+            totalGeneral += total;
+
+            const fila = document.createElement("tr");
+            fila.innerHTML = `
+        <td>${desc}</td>
+        <td>${cant}</td>
+        <td>$${precio.toLocaleString()}</td>
+        <td>$${total.toLocaleString()}</td>
+      `;
+            tabla.appendChild(fila);
+
+            document.getElementById("totalFinal").textContent = `Total: $${totalGeneral.toLocaleString()}`;
+
+            // Limpiar campos
+            document.getElementById("descripcion").value = "";
+            document.getElementById("cantidad").value = "";
+            document.getElementById("precio").value = "";
+        }
+
+        function generarPresupuesto() {
+            const cliente = document.getElementById("cliente").value;
+            if (!cliente) {
+                alert("Por favor, ingresa el nombre del cliente.");
+                return;
+            }
+
+            document.getElementById("nombreCliente").textContent = cliente;
+            document.getElementById("fecha").textContent = new Date().toLocaleDateString('es-AR');
+            generatePDF();
+        }
+
+        function generatePDF() {
+            const element = document.getElementById("presupuesto");
+            const opt = {
+                margin: 0.5,
+                filename: 'presupuesto.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(opt).save();
+        }
+
+        // Función para cargar registros
+        window.addEventListener("DOMContentLoaded", () => {
+            const inputFecha = document.getElementById("inputDate");
+            const hoy = new Date();
+            const yyyy = hoy.getFullYear();
+            const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+            const dd = String(hoy.getDate()).padStart(2, '0');
+
+            inputFecha.value = `${yyyy}-${mm}-${dd}`;
+
+            const fecha = document.getElementById("inputDate");
+        })
+
+        const formInput = document.getElementById('registroForm');
+        const mensajeElemento = document.getElementById('mensaje');
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtener la fecha de hoy y ayer
+            const hoy = new Date();
+            console.log(hoy)
+            const fechaHoy = hoy.toISOString().split('T')[0]; // YYYY-MM-DD
+            console.log(fechaHoy)
+
+            const ayer = new Date();
+            ayer.setDate(ayer.getDate() - 1); // Ayer
+            const fechaAyer = ayer.toISOString().split('T')[0]; // YYYY-MM-DD
+
+            // Establecer los atributos 'max' y 'min' correctamente
+            document.getElementById('toDate').setAttribute('max', fechaHoy); // Desde ayer
+            document.getElementById('fromDate').setAttribute('max', fechaHoy); // Desde ayer hasta hoy
+
+            // Forzar la fecha de hoy en el input 'toDate' (Hasta)
+            document.getElementById('toDate').value = fechaHoy;
+
+            // Si la fecha en 'fromDate' es menor que ayer, forzarla también a ayer
+            if (document.getElementById('fromDate').value === "") {
+                document.getElementById('fromDate').value = fechaAyer; // Establecer 'Desde' como ayer si está vacío
+            }
+
+            // Si quieres evitar que el input se quede con la fecha de ayer, puedes forzar la fecha a hoy si ya estaba en gris.
+            setTimeout(() => {
+                if (document.getElementById('toDate').value === fechaAyer) {
+                    document.getElementById('toDate').value = fechaHoy;
+                }
+            }, 10);
+        });
+
+        function cargarRegistros() {
+            // Obtener los registros desde el backend
+            fetch('http://localhost:8080/registro/list')
+                .then(response => response.json())
+                .then(data => {
+                    const tabla = document.querySelector('#tablaRegistros tbody');
+                    tabla.innerHTML = ''; // Limpiar tabla antes de agregar los nuevos registros
+
+                    // Iterar sobre los registros para agregarlos a la tabla
+                    data.forEach(registro => {
+                        const fila = document.createElement('tr');
+                        const montoDebe = registro.tipo === 'Sale' ? registro.monto : '';
+                        const montoHaber = registro.tipo === 'Entra' ? registro.monto : '';
+
+                        fila.innerHTML = `
+                    <td>${registro.fecha}</td>
+                    <td>${registro.nombre}</td>
+                    <td>${montoDebe}</td>
+                    <td>${montoHaber}</td>
+                    <td>${registro.balance}</td>
+                `;
+
+                        tabla.appendChild(fila);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar registros:', error);
+                });
+        }
+        document.getElementById("registroAddButtonForm").addEventListener("click", function (e) {
+            e.preventDefault();
+
+            // Obtener los valores de las fechas seleccionadas
+            const desdeFecha = document.querySelector('#fromDate').value;
+            const hastaFecha = document.querySelector('#toDate').value;
+
+            fetch('http://localhost:8080/registro/list')
+                .then(response => response.json())
+                .then(registros => {
+                    const registrosFiltrados = registros.filter(registro => {
+                        const fechaRegistro = new Date(registro.fecha);
+                        return fechaRegistro >= new Date(desdeFecha) && fechaRegistro <= new Date(hastaFecha);
+                    });
+
+                    let balanceActual = 0;
+                    if (registrosFiltrados.length > 0) {
+                        const ultimoRegistro = registrosFiltrados[registrosFiltrados.length - 1];
+                        balanceActual = ultimoRegistro.balance;
+                    }
+
+                    const tipo = document.querySelector('#tipo').value;
+                    const monto = parseFloat(document.querySelector('#monto').value);
+                    let nuevoBalance = balanceActual;
+                    if (tipo === 'Entra') {
+                        nuevoBalance += monto;
+                    } else if (tipo === 'Sale') {
+                        nuevoBalance -= monto;
+                    }
+
+                    const nuevoRegistro = {
+                        fecha: document.querySelector('#inputDate').value,
+                        nombre: document.querySelector('#Description').value,
+                        monto: monto,
+                        tipo: tipo,
+                        balance: nuevoBalance
+                    };
+
+                    return fetch('http://localhost:8080/registro/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(nuevoRegistro)
+                    }).then(res => {
+                        if (!res.ok) throw new Error('Error al crear el registro');
+                        return res;
+                    }).then(() => {
+                        if (tipo === 'Entra') {
+                            const descripcion = document.querySelector('#Description').value.toLowerCase();
+                            if (descripcion.includes('venta')) {
+                                const partes = descripcion.split('venta');
+                                if (partes.length > 1) {
+                                    const nombreProducto = partes[1].trim();
+                                    fetch('http://localhost:8080/productos/list')
+                                        .then(response => response.json())
+                                        .then(productos => {
+                                            const producto = productos.find(p => p.nombre.toLowerCase() === nombreProducto);
+                                            if (producto) {
+                                                const cantidadVendida = Math.floor(monto / producto.precioUnitario);
+                                                const nuevoStock = producto.stock - cantidadVendida;
+
+                                                const dtoProduct = {
+                                                    nombre: producto.nombre,
+                                                    fecha: producto.fecha,
+                                                    descripcion: producto.descripcion,
+                                                    precioCosto: producto.precioCosto,
+                                                    stock: nuevoStock,
+                                                    precioUnitario: producto.precioUnitario,
+                                                    porcentajeGanancia: producto.porcentajeGanancia
+                                                };
+
+                                                fetch(`http://localhost:8080/productos/edit/${producto.id}`, {
+                                                    method: 'PUT',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify(dtoProduct)
+                                                })
+                                                    .then(res => {
+                                                        if (!res.ok) throw new Error('Error al actualizar el stock');
+                                                        console.log(`Stock actualizado: ${producto.nombre} → ${nuevoStock}`);
+                                                    })
+                                                    .catch(err => console.error('Error al hacer PUT /edit:', err));
+                                            } else {
+                                                console.warn(`Producto no encontrado: ${nombreProducto}`);
+                                            }
+                                        })
+                                        .catch(error => console.error('Error al obtener productos:', error));
+                                }
+                            }
+                        }
+
+                        mensajeElemento.textContent = 'Registro creado correctamente';
+                        mensajeElemento.style.color = 'green';
+                        formInput.reset();
+                        const hoy = new Date().toISOString().split('T')[0];
+                        document.querySelector('#inputDate').value = hoy;
+                        cargarRegistros();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al procesar el formulario:', error);
+                    mensajeElemento.textContent = 'No se pudo crear el registro';
+                    mensajeElemento.style.color = 'red';
+                });
+        });
+
+        window.addEventListener('DOMContentLoaded', cargarRegistros);
+
+
+
+        document.getElementById('formFiltrarFechasButton').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const desde = document.getElementById('fromDate').value;
+            const hasta = document.getElementById('toDate').value;
+
+            fetch('http://localhost:8080/registro/list')
+                .then(response => response.json())
+                .then(data => {
+                    const tabla = document.querySelector('#tablaRegistros tbody');
+                    tabla.innerHTML = '';
+
+                    // Filtrar registros entre las fechas
+                    const registrosFiltrados = data.filter(registro => {
+                        return registro.fecha >= desde && registro.fecha <= hasta;
+
+                    });
+
+                    registrosFiltrados.forEach(registro => {
+                        const fila = document.createElement('tr');
+                        const montoDebe = registro.tipo === 'Sale' ? registro.monto : '';
+                        const montoHaber = registro.tipo === 'Entra' ? registro.monto : '';
+                        fila.innerHTML = `
+                    <td>${registro.fecha}</td>
+                    <td>${registro.nombre}</td>
+                    <td>${montoHaber}</td>
+                    <td>${montoDebe}</td>
+                    <td>${registro.balance}</td>
+                `;
+
+                        tabla.appendChild(fila);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar registros:', error);
+                });
+        });
+
+    </script>
+
+
+</body>
+
+</html>

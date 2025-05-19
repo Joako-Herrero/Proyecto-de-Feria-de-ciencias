@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventario </title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            padding: 20px;
+            color: #333;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header img {
+            height: 60px;
+        }
+
+        .info {
+            text-align: right;
+        }
+
+        h2 {
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f5f5f5;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .total {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 12px;
+            color: gray;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+
+        .download-btn {
+            margin: 20px 0;
+        }
+
+        input,
+        button {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .form-wrapper {
+            margin-bottom: 30px;
+        }
+
+        .form-inline {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Gestión de Stock</h2>
+
+    <!-- Reemplazá todo tu <form> y <script> con esto: -->
+    <form id="formProducto" class="form-wrapper">
+        <div class="form-inline">
+            <input type="date" id="fecha" required>
+            <input type="text" id="nombre" placeholder="Nombre o Descripción" required>
+            <input type="number" id="preciocosto" placeholder="Precio Costo" step="0.01" required>
+            <input type="number" id="porcentajeGanancia" placeholder="% de Ganancia" step="0.01" required>
+            <input type="number" id="stock" placeholder="Cantidad en Stock" required>
+            <input type="text" id="preciounitario" placeholder="Precio Venta" readonly>
+            <button type="submit">Agregar Producto</button>
+        </div>
+        <div id="mensajeProducto"></div>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Nombre</th>
+                <th>Precio Costo</th>
+                <th>% Ganancia</th>
+                <th>Precio Venta</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody id="tablaProductos"></tbody>
+    </table>
+
+    <script>
+        const costoInput = document.getElementById("preciocosto");
+        const gananciaInput = document.getElementById("porcentajeGanancia");
+        const precioInput = document.getElementById("preciounitario");
+
+        function calcularPrecioVenta() {
+            const costo = parseFloat(costoInput.value);
+            const ganancia = parseFloat(gananciaInput.value);
+            if (!isNaN(costo) && !isNaN(ganancia)) {
+                const venta = costo + (costo * ganancia / 100);
+                precioInput.value = venta.toFixed(2);
+            } else {
+                precioInput.value = "";
+            }
+        }
+
+        costoInput.addEventListener("input", calcularPrecioVenta);
+        gananciaInput.addEventListener("input", calcularPrecioVenta);
+
+        document.getElementById("formProducto").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const nuevoProducto = {
+                fecha: document.getElementById("fecha").value,
+                nombre: document.getElementById("nombre").value,
+                precioCosto: parseFloat(costoInput.value),
+                porcentajeGanancia: parseFloat(gananciaInput.value),
+                precioUnitario: parseFloat(precioInput.value),
+                stock: parseInt(document.getElementById("stock").value)
+            };
+
+            try {
+                const res = await fetch("http://localhost:8080/productos/create", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(nuevoProducto)
+                });
+
+                const mensaje = document.getElementById("mensajeProducto");
+                if (res.ok) {
+                    mensaje.textContent = "Producto guardado correctamente.";
+                    mensaje.style.color = "green";
+                    cargarProductos();
+                    this.reset();
+                    precioInput.value = "";
+                } else {
+                    mensaje.textContent = "Error al guardar el producto.";
+                    mensaje.style.color = "red";
+                }
+            } catch (err) {
+                console.error("Error:", err);
+            }
+        });
+
+        function cargarProductos() {
+            fetch("http://localhost:8080/productos/list")
+                .then(res => res.json())
+                .then(data => {
+                    const tabla = document.getElementById("tablaProductos");
+                    tabla.innerHTML = "";
+                    data.forEach(p => {
+                        const fila = document.createElement("tr");
+                        fila.innerHTML = `
+            <td>${p.fecha}</td>
+            <td>${p.nombre}</td>
+            <td>$${p.precioCosto.toFixed(2)}</td>
+            <td>${p.porcentajeGanancia}%</td>
+            <td>$${p.precioUnitario.toFixed(2)}</td>
+            <td>${p.stock}</td>
+          `;
+                        tabla.appendChild(fila);
+                    });
+                })
+                .catch(err => console.error("Error al cargar productos:", err));
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const hoy = new Date().toISOString().split("T")[0];
+            document.getElementById("fecha").value = hoy;
+            cargarProductos();
+        });
+    </script>
+
+
+
+</body>
+
+</html>

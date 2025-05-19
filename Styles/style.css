@@ -1,0 +1,95 @@
+/* Para Chrome, Safari y Edge */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+  /* Para eliminar las flechas completamente */
+}
+
+/* Para Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+  /* Elimina las flechas de Firefox */
+}
+
+/* Para Internet Explorer (aunque es raro que alguien lo use) */
+input[type="number"] {
+  -ms-appearance: textfield;
+  /* Elimina las flechas de IE */
+}
+
+/*Registro*/
+
+h4{
+  margin: 0;
+  text-align: center;
+}
+ 
+h3{
+  font-size: 2rem;
+  margin: .3rem;
+} 
+
+table{
+  border-collapse: collapse;
+  margin-left: 5rem;
+}
+th, td{
+  border: solid 2px black;
+  padding: 5px;
+  font-size: 1.3rem;
+}
+
+.registroTitulo{
+  margin-top: 2rem;
+  margin-left: 5rem;
+  width: 20rem;
+}
+
+
+
+.formInput{
+  position: absolute;
+  right: 7rem;
+  top: 3.5rem;
+  font-size: 2rem;
+  padding: 1rem;
+}
+
+.formInput form{
+  background-color: rgba(2, 145, 0, 0.657);
+  padding: 1rem;
+  padding-bottom: 24px;
+
+}
+
+.buscarFecha{
+  position: absolute;
+  right: 7rem;
+  top: 13rem;
+  width: 30rem;
+  
+}
+
+.buscarFecha form{
+  display: flex;
+  align-items: center;
+  gap: .7rem; /* Espacio entre los elementos */
+  font-size: 1.5rem;
+  flex-wrap: wrap; /* Para que se acomode mejor en pantallas chicas */  
+  border: dotted 2px black;
+  padding: 1rem;
+  background-color: rgba(247, 50, 139, 0.711);
+
+}
+
+.buscarFecha form button{
+  color: #000;
+  background-color: #fff;
+  border: none;
+  padding: 5px;
+  font-size: 1.2rem;
+}
+
+
+/*Registro*/
