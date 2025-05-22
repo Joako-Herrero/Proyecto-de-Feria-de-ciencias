@@ -250,7 +250,7 @@
         <div class="formInput">
             <h3>Añadir Registro:</h3>
             <form id="registroForm">
-                <input type="date" id="inputDate" name="fecha" >
+                <input type="date" id="inputDate" name="fecha" readonly>
                 <input type="text" name="Descripción" id="Description" placeholder="Descripción" required>
                 <input type="number" name="monto" id="monto" placeholder="Monto" required>
                 <select name="Caracter" id="tipo" required>
@@ -362,9 +362,9 @@
         // Fecha por defecto
         document.addEventListener("DOMContentLoaded", () => {
             const today = new Date().toISOString().split("T")[0];
-            document.getElementById("inputDate").value = today;
-            document.getElementById("fecha").value = today;
-            document.getElementById("fechaPresupuesto").textContent = today;
+            //document.getElementById("inputDate").value = today;
+            //document.getElementById("fecha").value = today;
+            //document.getElementById("fechaPresupuesto").textContent = today;
         });
 
         // Stock - Precio Venta
@@ -412,7 +412,7 @@
                     cargarProductos();
                     formProducto.reset();
                     const hoy = new Date().toISOString().split('T')[0];
-                    document.querySelector('#fecha').value = hoy;
+                    //document.querySelector('#fecha').value = hoy;
 
                     precioInput.value = "";
                 } else {
