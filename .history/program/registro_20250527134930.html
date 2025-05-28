@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Styles/style.css">
     <title>Digitaliza tu PyME</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
@@ -37,10 +38,9 @@
         }
 
         h3 {
-            font-size: 1.5rem;
+            font-size: 2rem;
             margin: .3rem;
         }
-
 
         table {
             border-collapse: collapse;
@@ -62,13 +62,49 @@
 
 
 
-        #formFiltrarFechas {
+        .formInput {
+            left: 50%;
+            
+            top: 8.5rem;
+            font-size: 2rem;
             padding: 1rem;
-            display: flex;
         }
 
-        #formFiltrarFechas input {
-            margin: .6rem;
+        .formInput form {
+            background-color: rgba(2, 145, 0, 0.657);
+            padding: 1rem;
+            padding-bottom: 24px;
+
+        }
+
+        .buscarFecha {
+            position: absolute;
+            left: 55%;
+            top: 50%;
+            width: 30rem;
+
+        }
+
+        .buscarFecha form {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            /* Espacio entre los elementos */
+            font-size: 1.5rem;
+            flex-wrap: wrap;
+            /* Para que se acomode mejor en pantallas chicas */
+            border: dotted 2px black;
+            padding: 1rem;
+            background-color: rgba(247, 50, 139, 0.711);
+
+        }
+
+        .buscarFecha form button {
+            color: #000;
+            background-color: #fff;
+            border: none;
+            padding: 5px;
+            font-size: 1.2rem;
         }
 
 
@@ -106,7 +142,7 @@
 
         .content.active {
             display: block;
-            height: 100%;
+            height: 100vh;
         }
 
         .header {
@@ -184,125 +220,10 @@
             flex-wrap: wrap;
             margin-bottom: 10px;
         }
-
-        /* --------- RESPONSIVE DESIGN --------- */
-        @media screen and (max-width: 768px) {
-            .tabs {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .tab {
-                width: 100%;
-                margin-right: 0;
-                margin-bottom: 5px;
-            }
-
-            .formInput,
-            .buscarFecha {
-                position: static;
-                width: 90%;
-                margin: 1rem auto;
-            }
-
-            table {
-                margin-left: 0;
-                width: 100%;
-                font-size: 1rem;
-            }
-
-            th,
-            td {
-                font-size: 1rem;
-                padding: 6px;
-            }
-
-            .registroTitulo {
-                margin-left: 0;
-                text-align: center;
-            }
-
-            .form-inline {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            input,
-            button,
-            select {
-                width: 100%;
-                font-size: 1rem;
-            }
-
-
-            .header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .header img {
-                margin-bottom: 10px;
-            }
-
-            .info {
-                text-align: center;
-            }
-
-            .content {
-                padding: 10px;
-            }
-
-            .form-wrapper {
-                padding: 0 1rem;
-            }
-        }
-
-        #loaderOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgb(255, 255, 255);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .loaderContent {
-            text-align: center;
-        }
-
-        .spinner {
-            border: 6px solid #f3f3f3;
-            border-top: 6px solid #333;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
     </style>
 </head>
 
 <body>
-    <div id="loaderOverlay" style="display: none;">
-        <div class="loaderContent">
-            <div class="spinner"></div>
-            <p>Cargando, por favor espera...</p>
-        </div>
-    </div>
 
     <div class="tabs">
         <div class="tab active" data-tab="hoja1">Registros</div>
@@ -312,12 +233,24 @@
 
     <!-- Contenido de Registros -->
     <div class="content active" id="hoja1">
-
+        <h3 class="registroTitulo">Registros del día:</h3>
+        <table id="tablaRegistros">
+            <thead>
+                <tr id="RegisterHeaders">
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>Haber</th>
+                    <th>Debe</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody id="RegisterValues"></tbody>
+        </table>
 
         <div class="formInput">
             <h3>Añadir Registro:</h3>
             <form id="registroForm">
-                <input type="date" id="inputDate" name="fecha">
+                <input type="date" id="inputDate" name="fecha" >
                 <input type="text" name="Descripción" id="Description" placeholder="Descripción" required>
                 <input type="number" name="monto" id="monto" placeholder="Monto" required>
                 <select name="Caracter" id="tipo" required>
@@ -339,20 +272,6 @@
                 <button type="button" id="formFiltrarFechasButton">Ver Registros pasados</button>
             </form>
         </div>
-        <hr>
-        <h3 class="registroTitulo">Registros del día:</h3>
-        <table id="tablaRegistros">
-            <thead>
-                <tr id="RegisterHeaders">
-                    <th>Fecha</th>
-                    <th>Descripción</th>
-                    <th>Haber</th>
-                    <th>Debe</th>
-                    <th>Balance</th>
-                </tr>
-            </thead>
-            <tbody id="RegisterValues"></tbody>
-        </table>
     </div>
 
     <!-- Contenido de Stock -->
@@ -427,14 +346,6 @@
 
     <!-- JavaScript General -->
     <script>
-        function mostrarLoader() {
-            document.getElementById("loaderOverlay").style.display = "flex";
-        }
-
-        function ocultarLoader() {
-            document.getElementById("loaderOverlay").style.display = "none";
-        }
-
         // Pestañas
         const tabs = document.querySelectorAll('.tab');
         const contents = document.querySelectorAll('.content');
@@ -477,7 +388,7 @@
 
         document.getElementById("agregarProductos").addEventListener("click", async function (e) {
             e.preventDefault();
-            formProducto = document.getElementById("formProducto");
+            formProducto=document.getElementById("formProducto");
             const nuevoProducto = {
                 fecha: document.getElementById("fecha").value,
                 nombre: document.getElementById("nombre").value,
@@ -514,7 +425,6 @@
         });
 
         function cargarProductos() {
-            mostrarLoader();
             fetch("https://backend-feria-ciencias.onrender.com/productos/list")
                 .then(res => res.json())
                 .then(data => {
@@ -531,7 +441,6 @@
             <td>${p.stock}</td>
           `;
                         tabla.appendChild(fila);
-                        ocultarLoader();
                     });
                 })
                 .catch(err => console.error("Error al cargar productos:", err));
@@ -693,11 +602,19 @@
                         return fechaRegistro >= new Date(desdeFecha) && fechaRegistro <= new Date(hastaFecha);
                     });
 
+                   // Ordenar registros por fecha
+                    registrosFiltrados.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+                    // Recalcular balance desde cero
                     let balanceActual = 0;
-                    if (registrosFiltrados.length > 0) {
-                        const ultimoRegistro = registrosFiltrados[registrosFiltrados.length - 1];
-                        balanceActual = ultimoRegistro.balance;
-                    }
+                    registrosFiltrados.forEach(r => {
+                        if (r.tipo === 'Entra') {
+                            balanceActual += r.monto;
+                        } else if (r.tipo === 'Sale') {
+                            balanceActual -= r.monto;
+                        }
+                    });
+
 
                     const tipo = document.querySelector('#tipo').value;
                     const monto = parseFloat(document.querySelector('#monto').value);

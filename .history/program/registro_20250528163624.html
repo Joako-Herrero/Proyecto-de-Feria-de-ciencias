@@ -37,10 +37,9 @@
         }
 
         h3 {
-            font-size: 1.5rem;
+            font-size: 2rem;
             margin: .3rem;
         }
-
 
         table {
             border-collapse: collapse;
@@ -62,19 +61,12 @@
 
 
 
-        #formFiltrarFechas {
-            padding: 1rem;
-            display: flex;
-        }
-
-        #formFiltrarFechas input {
-            margin: .6rem;
-        }
+        
 
 
         /*Registro*/
 
-        body {
+        body{
             font-family: sans-serif;
         }
 
@@ -234,7 +226,7 @@
                 font-size: 1rem;
             }
 
-
+            
             .header {
                 flex-direction: column;
                 text-align: center;
@@ -257,52 +249,11 @@
             }
         }
 
-        #loaderOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgb(255, 255, 255);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .loaderContent {
-            text-align: center;
-        }
-
-        .spinner {
-            border: 6px solid #f3f3f3;
-            border-top: 6px solid #333;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+        
     </style>
 </head>
 
 <body>
-    <div id="loaderOverlay" style="display: none;">
-        <div class="loaderContent">
-            <div class="spinner"></div>
-            <p>Cargando, por favor espera...</p>
-        </div>
-    </div>
 
     <div class="tabs">
         <div class="tab active" data-tab="hoja1">Registros</div>
@@ -312,7 +263,7 @@
 
     <!-- Contenido de Registros -->
     <div class="content active" id="hoja1">
-
+        
 
         <div class="formInput">
             <h3>Añadir Registro:</h3>
@@ -339,7 +290,7 @@
                 <button type="button" id="formFiltrarFechasButton">Ver Registros pasados</button>
             </form>
         </div>
-        <hr>
+
         <h3 class="registroTitulo">Registros del día:</h3>
         <table id="tablaRegistros">
             <thead>
@@ -427,14 +378,6 @@
 
     <!-- JavaScript General -->
     <script>
-        function mostrarLoader() {
-            document.getElementById("loaderOverlay").style.display = "flex";
-        }
-
-        function ocultarLoader() {
-            document.getElementById("loaderOverlay").style.display = "none";
-        }
-
         // Pestañas
         const tabs = document.querySelectorAll('.tab');
         const contents = document.querySelectorAll('.content');
@@ -514,7 +457,6 @@
         });
 
         function cargarProductos() {
-            mostrarLoader();
             fetch("https://backend-feria-ciencias.onrender.com/productos/list")
                 .then(res => res.json())
                 .then(data => {
@@ -531,7 +473,6 @@
             <td>${p.stock}</td>
           `;
                         tabla.appendChild(fila);
-                        ocultarLoader();
                     });
                 })
                 .catch(err => console.error("Error al cargar productos:", err));
