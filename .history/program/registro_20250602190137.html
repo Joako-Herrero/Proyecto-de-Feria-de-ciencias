@@ -395,8 +395,6 @@
             </thead>
             <tbody id="tablaProductos"></tbody>
         </table>
-        <button onclick="exportarProductosExcel()">Exportar productos a Excel</button>
-
     </div>
 
     <!-- Contenido de Presupuestador -->
@@ -462,29 +460,26 @@
                 .catch(error => console.error('Error al exportar registros:', error));
         }
 
-        function exportarProductosExcel() {
-            fetch('https://backend-feria-ciencias.onrender.com/productos/list')
+        function exportarExcel() {
+            fetch('https://backend-feria-ciencias.onrender.com/registro/list')
                 .then(response => response.json())
-                .then(productos => {
-                    const datos = productos.map(prod => ({
-                        Nombre: prod.nombre,
-                        Descripción: prod.descripcion,
-                        Stock: prod.stock,
-                        Precio_Costo: prod.precioCosto,
-                        Precio_Unitario: prod.precioUnitario,
-                        Porcentaje_Ganancia: prod.porcentajeGanancia,
-                        Fecha: prod.fecha
+                .then(registros => {
+                    const datos = registros.map(reg => ({
+                        Fecha: reg.fecha,
+                        Nombre: reg.nombre,
+                        Monto: reg.monto,
+                        Tipo: reg.tipo,
+                        Balance: reg.balance
                     }));
 
                     const ws = XLSX.utils.json_to_sheet(datos);
                     const wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, "Productos");
+                    XLSX.utils.book_append_sheet(wb, ws, "Registros");
 
-                    XLSX.writeFile(wb, "productos.xlsx");
+                    XLSX.writeFile(wb, "registros.xlsx");
                 })
-                .catch(error => console.error('Error al exportar productos:', error));
+                .catch(error => console.error('Error al exportar registros:', error));
         }
-
 
 
         function mostrarLoader() {

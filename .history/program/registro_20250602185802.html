@@ -395,8 +395,6 @@
             </thead>
             <tbody id="tablaProductos"></tbody>
         </table>
-        <button onclick="exportarProductosExcel()">Exportar productos a Excel</button>
-
     </div>
 
     <!-- Contenido de Presupuestador -->
@@ -461,31 +459,6 @@
                 })
                 .catch(error => console.error('Error al exportar registros:', error));
         }
-
-        function exportarProductosExcel() {
-            fetch('https://backend-feria-ciencias.onrender.com/productos/list')
-                .then(response => response.json())
-                .then(productos => {
-                    const datos = productos.map(prod => ({
-                        Nombre: prod.nombre,
-                        Descripción: prod.descripcion,
-                        Stock: prod.stock,
-                        Precio_Costo: prod.precioCosto,
-                        Precio_Unitario: prod.precioUnitario,
-                        Porcentaje_Ganancia: prod.porcentajeGanancia,
-                        Fecha: prod.fecha
-                    }));
-
-                    const ws = XLSX.utils.json_to_sheet(datos);
-                    const wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, "Productos");
-
-                    XLSX.writeFile(wb, "productos.xlsx");
-                })
-                .catch(error => console.error('Error al exportar productos:', error));
-        }
-
-
 
         function mostrarLoader() {
             document.getElementById("loaderOverlay").style.display = "flex";

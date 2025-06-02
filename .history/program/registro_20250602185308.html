@@ -129,7 +129,6 @@
         table {
             border-collapse: collapse;
             margin-top: 30px;
-
         }
 
         th,
@@ -202,8 +201,7 @@
                 width: 90%;
                 margin: 1rem auto;
             }
-
-            .buscarFecha {
+            .buscarFecha{
                 position: static;
                 max-width: 90%;
                 margin: 1rem auto;
@@ -213,13 +211,13 @@
 
             table {
                 margin-left: 0;
-                font-size: .8rem;
+                font-size: .9rem;
                 max-width: 90%;
             }
 
             th,
             td {
-                font-size: .8rem;
+                font-size: .9rem;
                 padding: 6px;
             }
 
@@ -262,7 +260,7 @@
                 padding: 0 1rem;
             }
 
-
+            
         }
 
         #loaderOverlay {
@@ -336,7 +334,7 @@
             </form>
             <h4 id="mensaje"></h4>
         </div>
-        <hr>
+<hr>
         <div class="buscarFecha">
             <h3>Buscar Registros pasados:</h3>
             <form id="formFiltrarFechas">
@@ -361,9 +359,6 @@
             </thead>
             <tbody id="RegisterValues"></tbody>
         </table>
-
-        <button onclick="exportarExcel()">Exportar a Excel</button>
-
     </div>
 
     <!-- Contenido de Stock -->
@@ -395,8 +390,6 @@
             </thead>
             <tbody id="tablaProductos"></tbody>
         </table>
-        <button onclick="exportarProductosExcel()">Exportar productos a Excel</button>
-
     </div>
 
     <!-- Contenido de Presupuestador -->
@@ -440,53 +433,6 @@
 
     <!-- JavaScript General -->
     <script>
-
-        function exportarExcel() {
-            fetch('https://backend-feria-ciencias.onrender.com/registro/list')
-                .then(response => response.json())
-                .then(registros => {
-                    const datos = registros.map(reg => ({
-                        Fecha: reg.fecha,
-                        Nombre: reg.nombre,
-                        Monto: reg.monto,
-                        Tipo: reg.tipo,
-                        Balance: reg.balance
-                    }));
-
-                    const ws = XLSX.utils.json_to_sheet(datos);
-                    const wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, "Registros");
-
-                    XLSX.writeFile(wb, "registros.xlsx");
-                })
-                .catch(error => console.error('Error al exportar registros:', error));
-        }
-
-        function exportarProductosExcel() {
-            fetch('https://backend-feria-ciencias.onrender.com/productos/list')
-                .then(response => response.json())
-                .then(productos => {
-                    const datos = productos.map(prod => ({
-                        Nombre: prod.nombre,
-                        Descripción: prod.descripcion,
-                        Stock: prod.stock,
-                        Precio_Costo: prod.precioCosto,
-                        Precio_Unitario: prod.precioUnitario,
-                        Porcentaje_Ganancia: prod.porcentajeGanancia,
-                        Fecha: prod.fecha
-                    }));
-
-                    const ws = XLSX.utils.json_to_sheet(datos);
-                    const wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, "Productos");
-
-                    XLSX.writeFile(wb, "productos.xlsx");
-                })
-                .catch(error => console.error('Error al exportar productos:', error));
-        }
-
-
-
         function mostrarLoader() {
             document.getElementById("loaderOverlay").style.display = "flex";
         }
@@ -892,8 +838,6 @@
         });
 
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
 </body>
 
 </html>
